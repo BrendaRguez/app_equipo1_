@@ -82,6 +82,33 @@ class MyAppState extends ChangeNotifier {
         receivedData_time.addAll(data);
       },
     );
+
+    print("---------------");
+
+    print("............0");
+
+    await Future.delayed(const Duration(milliseconds: 100));
+    Socket socket2 = await Socket.connect('192.168.4.1', 81);
+    List<int> receivedData_desp = [];
+
+    socket2.listen( //DISP DATA
+      (List<int> data) {
+        receivedData_desp.addAll(data);
+      },
+      onError: (error) {
+        print('Error receiving data: $error');
+      },
+      onDone: () {
+        // Data reception is complete
+        decodedData = String.fromCharCodes(receivedData_desp);
+        //print('Received data: $decodedData');
+        print(decodedData.length);
+        // Close the socket
+        save_disp(decodedData);
+        //disp = decodeList(decodedData);
+        socket2.close();
+      },
+    );
   }
 }
 
