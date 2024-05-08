@@ -80,7 +80,18 @@ class MyAppState extends ChangeNotifier {
       //TIME DATA
       (List<int> data) {
         receivedData_time.addAll(data);
-      },
+      },onError: (error) {
+          print('Error receiving data: $error');
+        },
+        onDone: () {
+          // Data reception is complete
+          decodedData = String.fromCharCodes(receivedData_time);
+          //print('Received data: $decodedData');
+          print(decodedData.length);
+          save_time(decodedData);
+          // Close the socket
+          socket3.close();
+        },
     );
 
     print("---------------");
@@ -118,6 +129,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  Random random = Random();
+  List<List<int>> stringToList(String str) {
+    List<List<int>> result = [];
+    
+    // Divide la cadena en partes usando "],[" como delimitador
+    List<String> parts = str.split("],[");
+    // Itera sobre cada parte y convierte las subcadenas en listas de enteros
+    for (String part in parts) {
+      List<int> innerList = [];
+      // Elimina los corchetes iniciales y finales
+      part = part.replaceAll('[', '').replaceAll(']', '');
+      List<String> innerParts = part.split(',');
+      for (String innerPart in innerParts) {
+        innerList.add(int.parse(innerPart.trim()));
+      }
+      result.add(innerList);
+    } 
+    return result;
+  }
+
+  
   List<FlSpot> generateRandomData(double count) {
     List<FlSpot> data = [];
     for (int i = 0; i < 100; i++) {
